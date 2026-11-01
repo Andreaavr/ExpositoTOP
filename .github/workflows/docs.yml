@@ -40,6 +40,7 @@ jobs:
 
       - name: Doxygen (HTML, XML y LaTeX) y refman.pdf
         run: |
+          mkdir -p target/doxygen
           doxygen Doxyfile
           make -C target/doxygen/latex
           cat target/doxygen/warnings.log || true
