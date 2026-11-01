@@ -1,0 +1,497 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ExpositoTOP - RTVRPTW: Recomendador Turístico con Ventanas de Tiempo.
+  Proyecto Maven de la Práctica 3 de Laboratorio de Desarrollo y Herramientas (ULL).
+
+  Órdenes principales:
+    mvn validate                 valida el POM y el entorno (enforcer)
+    mvn compile                  compila src/main/java
+    mvn test                     ejecuta los tests JUnit (surefire) y genera la cobertura (JaCoCo)
+    mvn package                  genera target/ExpositoTOP.jar (+ sources y javadoc)
+    mvn verify                   informe de cobertura + Checkstyle, PMD/CPD y SpotBugs (no bloqueantes)
+    mvn install                  instala el artefacto en ~/.m2/repository
+    mvn deploy                   publica en el repositorio definido en distributionManagement
+    mvn verify sonar:sonar       análisis en SonarQube (ver docs/sonarqube.md)
+    mvn exec:java                ejecuta el recomendador (ver propiedad exec.args)
+    mvn -Pdocs package           además genera la documentación con Doxygen y MkDocs
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>es.ull.esit</groupId>
+    <artifactId>expositotop</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>ExpositoTOP - RTVRPTW</name>
+    <description>
+        Recomendador turístico con ventanas de tiempo: resolución del Team Orienteering Problem
+        with Time Windows (TOPTW) mediante la metaheurística GRASP.
+    </description>
+    <url>https://github.com/Andreaavr/ExpositoTOP</url>
+    <inceptionYear>2024</inceptionYear>
+
+    <organization>
+        <name>Universidad de La Laguna - Escuela Superior de Ingeniería y Tecnología</name>
+        <url>https://www.ull.es</url>
+    </organization>
+
+    <developers>
+        <developer>
+            <id>Andreaavr</id>
+            <email>alu0101400655@ull.edu.es</email>
+            <roles>
+                <role>Mantenimiento, calidad y documentación</role>
+            </roles>
+        </developer>
+    </developers>
+
+    <scm>
+        <url>https://github.com/Andreaavr/ExpositoTOP</url>
+        <connection>scm:git:https://github.com/Andreaavr/ExpositoTOP.git</connection>
+    </scm>
+
+    <issueManagement>
+        <system>GitHub Issues</system>
+        <url>https://github.com/Andreaavr/ExpositoTOP/issues</url>
+    </issueManagement>
+
+    <ciManagement>
+        <system>GitHub Actions</system>
+        <url>https://github.com/Andreaavr/ExpositoTOP/actions</url>
+    </ciManagement>
+
+    <!-- Destino de "mvn deploy": un repositorio Maven en disco dentro de target/.
+         Para publicar en GitHub Packages se puede sobrescribir con
+         -DaltDeploymentRepository=github::https://maven.pkg.github.com/OWNER/ExpositoTOP -->
+    <distributionManagement>
+        <repository>
+            <id>local-release</id>
+            <name>Repositorio local de despliegue</name>
+            <url>file://${project.build.directory}/deploy-repo/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>local-snapshot</id>
+            <name>Repositorio local de snapshots</name>
+            <url>file://${project.build.directory}/deploy-repo/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <properties>
+        <!-- Codificación y versión de Java -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.release>17</maven.compiler.release>
+        <main.class>top.mainTOPTW</main.class>
+
+        <!-- Versiones de dependencias -->
+        <junit.version>4.13.2</junit.version>
+
+        <!-- Versiones de plugins -->
+        <maven-enforcer-plugin.version>3.5.0</maven-enforcer-plugin.version>
+        <maven-clean-plugin.version>3.4.0</maven-clean-plugin.version>
+        <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
+        <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
+        <maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
+        <maven-jar-plugin.version>3.4.2</maven-jar-plugin.version>
+        <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
+        <maven-javadoc-plugin.version>3.11.2</maven-javadoc-plugin.version>
+        <maven-install-plugin.version>3.1.3</maven-install-plugin.version>
+        <maven-deploy-plugin.version>3.1.3</maven-deploy-plugin.version>
+        <maven-site-plugin.version>3.21.0</maven-site-plugin.version>
+        <maven-project-info-reports-plugin.version>3.8.0</maven-project-info-reports-plugin.version>
+        <maven-checkstyle-plugin.version>3.6.0</maven-checkstyle-plugin.version>
+        <maven-pmd-plugin.version>3.26.0</maven-pmd-plugin.version>
+        <spotbugs-maven-plugin.version>4.8.6.6</spotbugs-maven-plugin.version>
+        <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
+        <exec-maven-plugin.version>3.5.0</exec-maven-plugin.version>
+        <sonar-maven-plugin.version>4.0.0.4121</sonar-maven-plugin.version>
+
+        <!-- Argumentos por defecto de "mvn exec:java" (ejecución corta y reproducible).
+             Se pueden cambiar en la línea de órdenes con -Dexec.args (ver docs/guia-usuario.md). -->
+        <exec.args>--iterations 100 --seed 42 c101.txt r101.txt rc101.txt</exec.args>
+
+        <!-- Configuración de SonarQube / SonarCloud -->
+        <sonar.projectKey>ExpositoTOP</sonar.projectKey>
+        <sonar.projectName>ExpositoTOP - RTVRPTW</sonar.projectName>
+        <sonar.host.url>http://localhost:9000</sonar.host.url>
+        <sonar.sourceEncoding>UTF-8</sonar.sourceEncoding>
+        <sonar.java.source>17</sonar.java.source>
+        <sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+        <sonar.exclusions>Instances/**,docs/**,site/**</sonar.exclusions>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>ExpositoTOP</finalName>
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>${maven-clean-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>${maven-resources-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <version>${maven-install-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>${maven-deploy-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>${maven-site-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.sonarsource.scanner.maven</groupId>
+                    <artifactId>sonar-maven-plugin</artifactId>
+                    <version>${sonar-maven-plugin.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <!-- validate: comprueba versiones mínimas de Java y Maven -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>${maven-enforcer-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>enforce-environment</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireJavaVersion>
+                                    <version>[17,)</version>
+                                </requireJavaVersion>
+                                <requireMavenVersion>
+                                    <version>[3.6.3,)</version>
+                                </requireMavenVersion>
+                                <dependencyConvergence/>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- compile: compilación con todas las advertencias activadas -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
+                    <release>${maven.compiler.release}</release>
+                    <showWarnings>true</showWarnings>
+                    <compilerArgs>
+                        <arg>-Xlint:all</arg>
+                    </compilerArgs>
+                </configuration>
+            </plugin>
+
+            <!-- test: ejecución de los tests unitarios -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven-surefire-plugin.version}</version>
+                <configuration>
+                    <!-- Los tests leen las instancias con rutas relativas a la raíz del proyecto -->
+                    <workingDirectory>${project.basedir}</workingDirectory>
+                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                </configuration>
+            </plugin>
+
+            <!-- Cobertura de código: agente en los tests, informe y umbral mínimo en verify -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>check</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <rule>
+                                    <element>BUNDLE</element>
+                                    <limits>
+                                        <limit>
+                                            <counter>LINE</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>0.70</minimum>
+                                        </limit>
+                                    </limits>
+                                </rule>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- package: JAR ejecutable (java -jar target/ExpositoTOP.jar) -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>${maven-jar-plugin.version}</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>${main.class}</mainClass>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+
+            <!-- package: JAR con el código fuente -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>${maven-source-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- package: JAR con el Javadoc (los comandos \brief de Doxygen se ignoran) -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${maven-javadoc-plugin.version}</version>
+                <configuration>
+                    <doclint>none</doclint>
+                    <quiet>true</quiet>
+                    <failOnError>false</failOnError>
+                    <show>package</show>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- verify: guía de estilo (no bloqueante, informe en target/checkstyle-result.xml) -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>${maven-checkstyle-plugin.version}</version>
+                <configuration>
+                    <configLocation>google_checks.xml</configLocation>
+                    <consoleOutput>false</consoleOutput>
+                    <failOnViolation>false</failOnViolation>
+                    <violationSeverity>error</violationSeverity>
+                    <includeTestSourceDirectory>false</includeTestSourceDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>checkstyle</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- verify: análisis estático PMD y detección de código duplicado (CPD) -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>${maven-pmd-plugin.version}</version>
+                <configuration>
+                    <targetJdk>${maven.compiler.release}</targetJdk>
+                    <printFailingErrors>true</printFailingErrors>
+                    <failOnViolation>false</failOnViolation>
+                    <minimumTokens>100</minimumTokens>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>pmd</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                            <goal>cpd-check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- verify: detección de errores en bytecode -->
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>${spotbugs-maven-plugin.version}</version>
+                <configuration>
+                    <effort>Max</effort>
+                    <threshold>Medium</threshold>
+                    <failOnError>false</failOnError>
+                    <xmlOutput>true</xmlOutput>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>spotbugs</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- mvn exec:java: ejecuta el recomendador desde Maven -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>${exec-maven-plugin.version}</version>
+                <configuration>
+                    <mainClass>${main.class}</mainClass>
+                    <workingDirectory>${project.basedir}</workingDirectory>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <!-- mvn site: portal de informes de Maven (cobertura, PMD, Checkstyle, SpotBugs, Javadoc) -->
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>${maven-project-info-reports-plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco-maven-plugin.version}</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>report</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>${maven-checkstyle-plugin.version}</version>
+                <configuration>
+                    <configLocation>google_checks.xml</configLocation>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-pmd-plugin</artifactId>
+                <version>${maven-pmd-plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>${spotbugs-maven-plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${maven-javadoc-plugin.version}</version>
+                <configuration>
+                    <doclint>none</doclint>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
+
+    <profiles>
+        <!-- mvn -Pdocs package: genera Doxygen (HTML + LaTeX) y el portal MkDocs.
+             Requiere doxygen, graphviz y mkdocs (pip install -r requirements-docs.txt). -->
+        <profile>
+            <id>docs</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>${exec-maven-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>doxygen</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>doxygen</executable>
+                                    <arguments>
+                                        <argument>Doxyfile</argument>
+                                    </arguments>
+                                    <workingDirectory>${project.basedir}</workingDirectory>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>mkdocs</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>mkdocs</executable>
+                                    <arguments>
+                                        <argument>build</argument>
+                                    </arguments>
+                                    <workingDirectory>${project.basedir}</workingDirectory>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>
