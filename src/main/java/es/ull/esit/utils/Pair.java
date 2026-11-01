@@ -1,30 +1,27 @@
 package es.ull.esit.utils;
-import java.util.Objects;
 
-public class Pair<F, S> {
-    public final F first;
-    public final S second;
+/**
+ * \brief Par inmutable de valores.
+ *
+ * \details Se declara como record: Java genera automáticamente el constructor, los
+ * accesores first() y second(), equals(), hashCode() y toString().
+ *
+ * @param <F>    tipo del primer elemento.
+ * @param <S>    tipo del segundo elemento.
+ * @param first  primer elemento.
+ * @param second segundo elemento.
+ */
+public record Pair<F, S>(F first, S second) {
 
-    public Pair(F first, S second) {
-        this.first = first;
-        this.second = second;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (!(o instanceof Pair)) {
-            return false;
-        }
-        Pair<?, ?> p = (Pair<?, ?>) o;
-        return Objects.equals(p.first, first) && Objects.equals(p.second, second);
-    }
-
-    @Override
-    public int hashCode() {
-        return (first == null ? 0 : first.hashCode()) ^ (second == null ? 0 : second.hashCode());
-    }
-
-    public static <A, B> Pair <A, B> create(A a, B b) {
-        return new Pair<A, B>(a, b);
+    /**
+     * \brief Método factoría.
+     * @param <A> tipo del primer elemento.
+     * @param <B> tipo del segundo elemento.
+     * @param a   primer elemento.
+     * @param b   segundo elemento.
+     * @return nuevo par.
+     */
+    public static <A, B> Pair<A, B> create(A a, B b) {
+        return new Pair<>(a, b);
     }
 }

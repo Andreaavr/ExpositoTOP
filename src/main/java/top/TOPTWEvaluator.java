@@ -1,34 +1,24 @@
 package top;
 
+/**
+ * \brief Evaluador de la función objetivo del TOPTW.
+ *
+ * \details La función objetivo del TOPTW es maximizar la suma de las puntuaciones de los
+ * puntos de interés visitados por todas las rutas. El evaluador calcula ese valor y lo
+ * almacena en la propia solución.
+ */
 public class TOPTWEvaluator {
-    public static double NO_EVALUATED = -1.0;
+    /** \brief Valor que indica que una solución todavía no ha sido evaluada. */
+    public static final double NO_EVALUATED = -1.0;
 
-    public void evaluate(TOPTWSolution solution) {
-        /*CumulativeCVRP problem = solution.getProblem();
-        double objectiveFunctionValue = 0.0;
-        for (int i = 0; i < solution.getIndexDepot().size(); i++) {
-            double cumulative = 0;
-            int depot = solution.getAnIndexDepot(i);
-            int actual = depot;
-            actual = solution.getSuccessor(actual);
-            cumulative += problem.getDistanceMatrix(0, actual);
-            objectiveFunctionValue += problem.getDistanceMatrix(0, actual);
-            System.out.println("Desde " + 0 + " a " + actual + " = " + cumulative);
-            while (actual != depot) {
-                int ant = actual;
-                actual = solution.getSuccessor(actual);
-                if (actual != depot) {
-                    cumulative += problem.getDistanceMatrix(ant, actual);
-                    objectiveFunctionValue += cumulative;
-                    System.out.println("Desde " + ant + " a " + actual + " = " + cumulative);
-                } else {
-                    cumulative += problem.getDistanceMatrix(ant, 0);
-                    objectiveFunctionValue += cumulative;
-                    System.out.println("Desde " + ant + " a " + 0 + " = " + cumulative);
-                }
-            }
-            System.out.println("");
-        }
-        solution.setObjectiveFunctionValue(objectiveFunctionValue);*/
+    /**
+     * \brief Evalúa una solución y guarda el resultado en ella.
+     * @param solution solución a evaluar.
+     * @return valor de la función objetivo (puntuación total).
+     */
+    public double evaluate(TOPTWSolution solution) {
+        double value = solution.evaluateFitness();
+        solution.setObjectiveFunctionValue(value);
+        return value;
     }
 }
