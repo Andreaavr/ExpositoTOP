@@ -3,13 +3,8 @@
 **Recomendador Turístico con Ventanas de Tiempo**: resolución del *Team Orienteering Problem
 with Time Windows* (TOPTW) con la metaheurística GRASP.
 
-[![CI](https://github.com/Andreaavr/ExpositoTOP/actions/workflows/ci.yml/badge.svg)](https://github.com/Andreaavr/ExpositoTOP/actions/workflows/ci.yml)
-[![Documentación](https://github.com/Andreaavr/ExpositoTOP/actions/workflows/docs.yml/badge.svg)](https://andreaavr.github.io/ExpositoTOP/)
-
 Práctica 3 de *Laboratorio de Desarrollo y Herramientas* (Grado en Ingeniería Informática, ULL):
 herramientas de calidad del producto software y documentación — **Maven, SonarQube, Doxygen y MkDocs**.
-
-📖 **Portal técnico:** <https://andreaavr.github.io/ExpositoTOP/>
 
 ## Inicio rápido
 
@@ -33,9 +28,18 @@ Requisitos: JDK 17+ y Maven 3.6.3+. Detalles en la [guía de usuario](docs/guia-
 ├── docs/                         Páginas del portal (guías, arquitectura, calidad, ADR)
 │   └── pdf/                      Documentación técnica en PDF
 ├── scripts/build_pdf.py          Genera el PDF del portal
-├── sonarqube/docker-compose.yml  SonarQube local
-└── .github/workflows/            CI (Maven + SonarQube) y publicación en GitHub Pages
+└── sonarqube/docker-compose.yml  SonarQube local
 ```
+
+## Documentación
+
+| Entregable | Dónde |
+|---|---|
+| Manual de referencia del código (Doxygen + LaTeX) | [docs/pdf/ExpositoTOP-referencia-doxygen.pdf](docs/pdf/ExpositoTOP-referencia-doxygen.pdf) |
+| Portal técnico completo en PDF (MkDocs) | [docs/pdf/ExpositoTOP-documentacion.pdf](docs/pdf/ExpositoTOP-documentacion.pdf) |
+| Páginas del portal en Markdown | [docs/](docs/index.md) |
+
+Para ver el portal en local: `pip install -r requirements-docs.txt` y `mkdocs serve`.
 
 ## Órdenes útiles
 
@@ -47,6 +51,7 @@ Requisitos: JDK 17+ y Maven 3.6.3+. Detalles en la [guía de usuario](docs/guia-
 | `mvn exec:java` | Ejecuta el recomendador desde Maven |
 | `mvn -Pdocs package` | Genera Doxygen y el portal MkDocs |
 | `mkdocs serve` | Vista previa del portal |
+| `mkdocs build` | Portal estático en `site/` |
 
 ## Historial
 
