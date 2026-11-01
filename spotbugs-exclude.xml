@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Exclusiones justificadas de SpotBugs.
+  EI_EXPOSE_REP / EI_EXPOSE_REP2: las clases del algoritmo comparten a propósito referencias
+  a objetos mutables (la solución que el GRASP construye, la instancia del problema, el
+  generador aleatorio y el flujo de salida inyectados). Copiarlos rompería el diseño:
+  el GRASP debe modificar la misma solución que recibe. Los arrays sí se devuelven copiados.
+-->
+<FindBugsFilter>
+    <Match>
+        <Or>
+            <Bug pattern="EI_EXPOSE_REP"/>
+            <Bug pattern="EI_EXPOSE_REP2"/>
+        </Or>
+        <Or>
+            <Class name="top.TOPTWGRASP"/>
+            <Class name="top.TOPTWSolution"/>
+            <Class name="es.ull.esit.utilities.BellmanFord"/>
+        </Or>
+    </Match>
+</FindBugsFilter>

@@ -108,8 +108,8 @@ public final class ExpositoUtilities {
      * @return cadena formateada (sin cambios si es entera o no numérica).
      */
     public static String getFormat(String string) {
-        if (!ExpositoUtilities.isInteger(string) && ExpositoUtilities.isDouble(string)) {
-            return ExpositoUtilities.getFormat(Double.parseDouble(string));
+        if (!isInteger(string) && isDouble(string)) {
+            return getFormat(Double.parseDouble(string));
         }
         return string;
     }
@@ -148,7 +148,7 @@ public final class ExpositoUtilities {
      * @return cadena alineada.
      */
     public static String getFormat(String string, int width) {
-        return ExpositoUtilities.getFormat(string, width, ExpositoUtilities.ALIGNMENT_RIGHT);
+        return getFormat(string, width, ALIGNMENT_RIGHT);
     }
 
     /**
@@ -159,7 +159,7 @@ public final class ExpositoUtilities {
      * @return cadena alineada.
      */
     public static String getFormat(String string, int width, int alignment) {
-        String format = alignment == ExpositoUtilities.ALIGNMENT_LEFT ? "%-" + width + "s" : "%" + width + "s";
+        String format = alignment == ALIGNMENT_LEFT ? "%-" + width + "s" : "%" + width + "s";
         return String.format(format, string);
     }
 
@@ -195,7 +195,7 @@ public final class ExpositoUtilities {
     public static String getFormat(String[] strings, int width) {
         int[] widths = new int[strings.length];
         Arrays.fill(widths, width);
-        return ExpositoUtilities.getFormat(strings, widths);
+        return getFormat(strings, widths);
     }
 
     /**
@@ -207,7 +207,7 @@ public final class ExpositoUtilities {
     public static String getFormat(String[][] matrixStrings, int width) {
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < matrixStrings.length; i++) {
-            result.append(ExpositoUtilities.getFormat(matrixStrings[i], width));
+            result.append(getFormat(matrixStrings[i], width));
             if (i < matrixStrings.length - 1) {
                 result.append('\n');
             }
@@ -221,7 +221,7 @@ public final class ExpositoUtilities {
      * @return fila formateada.
      */
     public static String getFormat(String[] strings) {
-        return ExpositoUtilities.getFormat(strings, DEFAULT_COLUMN_WIDTH);
+        return getFormat(strings, DEFAULT_COLUMN_WIDTH);
     }
 
     /**
@@ -232,8 +232,8 @@ public final class ExpositoUtilities {
      */
     public static String getFormat(String[] strings, int[] width) {
         int[] alignment = new int[strings.length];
-        Arrays.fill(alignment, ExpositoUtilities.ALIGNMENT_RIGHT);
-        return ExpositoUtilities.getFormat(strings, width, alignment);
+        Arrays.fill(alignment, ALIGNMENT_RIGHT);
+        return getFormat(strings, width, alignment);
     }
 
     /**
@@ -299,7 +299,7 @@ public final class ExpositoUtilities {
     public static boolean isAcyclic(int[][] distanceMatrix) {
         int numRealTasks = distanceMatrix.length - 2;
         for (int node = 1; node <= numRealTasks; node++) {
-            if (ExpositoUtilities.thereIsPath(distanceMatrix, node)) {
+            if (thereIsPath(distanceMatrix, node)) {
                 return false;
             }
         }

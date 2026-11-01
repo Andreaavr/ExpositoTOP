@@ -47,10 +47,10 @@ public class TOPTWSolution {
         this.successors = new int[this.problem.getPOIs() + this.problem.getVehicles()];
         this.waitingTime = new double[this.problem.getPOIs()];
         this.positionInRoute = new int[this.problem.getPOIs()];
-        Arrays.fill(this.predecessors, TOPTWSolution.NO_INITIALIZED);
-        Arrays.fill(this.successors, TOPTWSolution.NO_INITIALIZED);
-        Arrays.fill(this.waitingTime, TOPTWSolution.NO_INITIALIZED);
-        Arrays.fill(this.positionInRoute, TOPTWSolution.NO_INITIALIZED);
+        Arrays.fill(this.predecessors, NO_INITIALIZED);
+        Arrays.fill(this.successors, NO_INITIALIZED);
+        Arrays.fill(this.waitingTime, NO_INITIALIZED);
+        Arrays.fill(this.positionInRoute, NO_INITIALIZED);
         this.routes = new int[this.problem.getVehicles()];
         this.objectiveFunctionValue = TOPTWEvaluator.NO_EVALUATED;
     }
@@ -61,10 +61,10 @@ public class TOPTWSolution {
     public void initSolution() {
         this.predecessors = new int[this.problem.getPOIs() + this.problem.getVehicles()];
         this.successors = new int[this.problem.getPOIs() + this.problem.getVehicles()];
-        Arrays.fill(this.predecessors, TOPTWSolution.NO_INITIALIZED);
-        Arrays.fill(this.successors, TOPTWSolution.NO_INITIALIZED);
+        Arrays.fill(this.predecessors, NO_INITIALIZED);
+        Arrays.fill(this.successors, NO_INITIALIZED);
         this.routes = new int[this.problem.getVehicles()];
-        Arrays.fill(this.routes, TOPTWSolution.NO_INITIALIZED);
+        Arrays.fill(this.routes, NO_INITIALIZED);
         this.routes[0] = 0;
         this.predecessors[0] = 0;
         this.successors[0] = 0;

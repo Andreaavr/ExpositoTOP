@@ -43,7 +43,7 @@ public class BellmanFord {
         this.nodes = nodes;
         this.path = path;
         this.calculateEdges();
-        this.value = BellmanFord.INFINITY;
+        this.value = INFINITY;
     }
 
     /**
@@ -86,7 +86,7 @@ public class BellmanFord {
         int[] predecessor = new int[this.nodes];
         this.distances = new int[this.nodes];
         for (int i = 0; i < this.nodes; i++) {
-            this.distances[i] = BellmanFord.INFINITY;
+            this.distances[i] = INFINITY;
             predecessor[i] = -1;
         }
         this.distances[0] = 0;

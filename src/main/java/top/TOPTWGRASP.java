@@ -26,8 +26,8 @@ import java.util.Random;
  * \code
  * procedure GRASP(MaxIterations, Seed)
  *   for k = 1..MaxIterations do
- *     Solution <- GreedyRandomizedConstruction(Seed)
- *     Solution <- LocalSearch(Solution)        // pendiente de implementar
+ *     Solution = GreedyRandomizedConstruction(Seed)
+ *     Solution = LocalSearch(Solution)         // pendiente de implementar
  *     UpdateSolution(Solution, BestSolution)
  *   return BestSolution
  * \endcode
