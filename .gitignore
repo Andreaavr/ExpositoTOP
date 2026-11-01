@@ -1,0 +1,18 @@
+# Resultados de compilación
+build/
+dist/
+target/
+*.class
+*.jar
+
+# Configuración de IDEs
+.idea/
+*.iml
+.settings/
+.classpath
+.project
+nbproject/private/
+
+# Copias de seguridad
+*~
+*.bak
