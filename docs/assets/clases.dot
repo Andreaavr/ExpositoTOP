@@ -1,0 +1,29 @@
+digraph G {
+  rankdir=TB; nodesep=0.4; ranksep=0.6; bgcolor="transparent";
+  node [shape=record, fontname="Helvetica", fontsize=10, style=filled, fillcolor="#eef1fb", color="#3f51b5"];
+  edge [fontname="Helvetica", fontsize=9, color="#555555"];
+  subgraph cluster_top { label="top"; fontname="Helvetica-Bold"; color="#9fa8da"; style=rounded;
+    Main [label="{MainTOPTW|+ main(args)\l~ parseArgs(args)\l~ run(options, out)\l}"];
+    Reader [label="{TOPTWReader|+ readProblem(path): TOPTW\l}"];
+    TOPTW [label="{TOPTW|- x, y, score[]\l- readyTime, dueTime[]\l- serviceTime[]\l- distanceMatrix[][]\l|+ getDistance(i, j)\l+ isDepot(i)\l}"];
+    Sol [label="{TOPTWSolution|- predecessors[]\l- successors[]\l- routes[]\l|+ addRoute()\l+ evaluateFitness()\l+ getInfoSolution()\l}"];
+    GRASP [label="{TOPTWGRASP|- random\l- strategy\l- alpha\l|+ grasp(it, rcl)\l+ computeGreedySolution(rcl)\l+ comprehensiveEvaluation()\l}"];
+    Eval [label="{TOPTWEvaluator|+ evaluate(solution)\l}"];
+    Route [label="{TOPTWRoute|- predecessor, successor, id\l}"];
+  }
+  subgraph cluster_util { label="es.ull.esit.utilities / utils"; fontname="Helvetica-Bold"; color="#80cbc4"; style=rounded;
+    Utils [label="{«utility» ExpositoUtilities|+ simplifyString()\l+ getFormat(...)\l+ isAcyclic()\l}", fillcolor="#e6f4f1", color="#00897b"];
+    Power [label="{PowerSet\<E\>|+ next(): Set\<E\>\l}", fillcolor="#e6f4f1", color="#00897b"];
+    BF [label="{BellmanFord|+ solve()\l}", fillcolor="#e6f4f1", color="#00897b"];
+    Pair [label="{Pair\<F,S\>|+ getFirst()\l+ getSecond()\l}", fillcolor="#e6f4f1", color="#00897b"];
+  }
+  Main -> Reader [style=dashed, label="usa"];
+  Main -> GRASP [style=dashed, label="crea"];
+  Reader -> TOPTW [style=dashed, label="crea"];
+  Sol -> TOPTW [arrowhead=vee, label="problem"];
+  GRASP -> Sol [arrowhead=vee, label="solution"];
+  Eval -> Sol [style=dashed];
+  Sol -> Utils [style=dashed];
+  Reader -> Utils [style=dashed];
+  TOPTW -> Utils [style=dashed];
+}

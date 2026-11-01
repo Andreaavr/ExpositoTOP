@@ -1,0 +1,7 @@
+mkdocs>=1.6,<2
+mkdocs-material>=9.5,<10
+mkdoxy>=1.2,<2
+pymdown-extensions>=10.8
+# Generación del PDF del portal (scripts/build_pdf.py)
+playwright>=1.44
+pypdf>=4.2

@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Maven verify (+ SonarQube)
+    runs-on: ubuntu-latest
+    env:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # historial completo para el análisis de "New Code" de SonarQube
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Construir, probar y analizar estáticamente
+        run: mvn -B -ntp clean verify
+
+      - name: Install y deploy (repositorio en target/deploy-repo)
+        run: mvn -B -ntp -DskipTests deploy
+
+      - name: Análisis SonarQube Cloud
+        if: env.SONAR_TOKEN != ''
+        run: >
+          mvn -B -ntp sonar:sonar
+          -Dsonar.host.url=https://sonarcloud.io
+          -Dsonar.organization=${{ vars.SONAR_ORGANIZATION }}
+          -Dsonar.projectKey=${{ vars.SONAR_PROJECT_KEY }}
+
+      - name: Ejecución de prueba del JAR
+        run: java -jar target/ExpositoTOP.jar --iterations 20 --seed 42 c101.txt pr01.txt | grep -E "Instance|MEDIA|MEJOR"
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: informes-maven
+          path: |
+            target/*.jar
+            target/surefire-reports/
+            target/site/jacoco/
+            target/checkstyle-result.xml
+            target/pmd.xml
+            target/cpd.xml
+            target/spotbugsXml.xml

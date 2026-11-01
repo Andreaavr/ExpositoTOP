@@ -16,3 +16,6 @@ nbproject/private/
 # Copias de seguridad
 *~
 *.bak
+.venv/
+site/
+.mkdoxy/
